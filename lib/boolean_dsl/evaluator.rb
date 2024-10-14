@@ -26,7 +26,7 @@ class BooleanDsl::Evaluator
       if context.key?(tree[:attribute].to_s)
         context[tree[:attribute].to_s]
       else
-        raise BooleanDsl::EvaluationFailed.new("Context does not have key #{tree[:attribute]}")
+        raise BooleanDsl::EvaluationFailed, "Context does not have key #{tree[:attribute]}"
       end
     elsif tree.key?(:negation)
       !evaluate(tree[:negation])
@@ -40,6 +40,12 @@ class BooleanDsl::Evaluator
       BigDecimal(tree[:decimal])
     elsif tree.key?(:integer)
       Integer(tree[:integer], 10)
+    elsif tree.key?(:date)
+      begin
+        Date.parse(tree[:date])
+      rescue Date::Error => e
+        raise BooleanDsl::EvaluationFailed, "#{e.message.upcase_first} #{tree[:date]}"
+      end
     end
   end
 
@@ -68,6 +74,8 @@ class BooleanDsl::Evaluator
     when 'excludes'
       !left.include?(right)
     end
+  rescue StandardError
+    raise BooleanDsl::EvaluationFailed, "Invalid comparison"
   end
 
   # Given a left and right expression and an operator, compares left and right using the operator.

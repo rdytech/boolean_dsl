@@ -44,6 +44,12 @@ describe BooleanDsl::Parser do
     specify { expect(parser.parse_with_debug("'I am, 12345, \"you\" are'   ")).to eq(string: 'I am, 12345, "you" are') }
   end
 
+  context 'date literals' do
+    specify { expect(parser.parse_with_debug("31/12/2024")).to eq(date: "31/12/2024") }
+    specify { expect(parser.parse_with_debug("1/1/2024")).to eq(date: "1/1/2024") }
+    specify { expect(parser.parse_with_debug("02/03/2024")).to eq(date: "02/03/2024") }
+  end
+
   context 'arrays' do
     specify { expect(parser.parse_with_debug("[]")).to eq(array: []) }
     specify { expect(parser.parse_with_debug("[1]")).to eq(array: [{ integer: "1" }]) }

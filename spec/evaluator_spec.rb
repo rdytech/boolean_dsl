@@ -30,6 +30,17 @@ describe BooleanDsl::Evaluator do
     specify { expect(evaluator.evaluate_comparison([1, 'alpha'], 'excludes', 0)).to be_truthy }
     specify { expect(evaluator.evaluate_comparison([1, 'alpha'], 'excludes', 'alpha')).to be_falsey }
     specify { expect(evaluator.evaluate_comparison([1, 'alpha'], 'excludes', 'beta')).to be_truthy }
+
+    specify { expect(evaluator.evaluate_comparison(Date.new(2024,9,1), '==', Date.new(2024,9,1))).to be_truthy }
+    specify { expect(evaluator.evaluate_comparison(Date.new(2024,9,1), '<', Date.new(2024,9,2))).to be_truthy }
+    specify { expect(evaluator.evaluate_comparison(Date.new(2024,9,1), '>', Date.new(2024,8,31))).to be_truthy }
+    specify { expect(evaluator.evaluate_comparison(Date.new(2024,9,1), '<=', Date.new(2024,9,1))).to be_truthy }
+    specify { expect(evaluator.evaluate_comparison(Date.new(2024,9,1), '>=', Date.new(2024,9,1))).to be_truthy }
+
+    specify do
+      expect { evaluator.evaluate_comparison(Date.new(2024,9,1), '>', 'a string') }
+        .to raise_error(BooleanDsl::EvaluationFailed, 'Invalid comparison')
+    end
   end
 
   context '#evaluate_boolean' do
@@ -71,6 +82,7 @@ describe BooleanDsl::Evaluator do
     specify { expect(outcome_for("['alpha','beta'] excludes 'beta'")).to be_falsey }
     specify { expect(outcome_for("[] excludes 'beta'")).to be_truthy }
     specify { expect(outcome_for("attribute_array excludes 'beta'", { "attribute_array" => ["alpha", "beta"]})).to be_falsey }
+    specify { expect(outcome_for("start_date > 1/9/2024", { 'start_date' => Date.new(2024,9,2) })).to be_truthy }
   end
 end
 
