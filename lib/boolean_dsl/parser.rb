@@ -5,12 +5,15 @@ class BooleanDsl::Parser < Parslet::Parser
 
   # Literals
   rule(:sign) { match('[+-]') }
-  rule(:digits) { match('[0-9]').repeat(1) }
+  rule(:digit) { match('[0-9]') }
+  rule(:digits) { digit.repeat(1) }
   rule(:decimal_fragment) { digits >> str(".") >> digits }
 
   rule(:integer) { (sign.maybe >> digits).as(:integer) >> space? }
   rule(:decimal) { (sign.maybe >> decimal_fragment).as(:decimal) >> space? }
   rule(:percentage) { (sign.maybe >> (decimal_fragment | digits) >> str("%")).as(:percentage) >> space? }
+
+  rule(:date) { (digit.repeat(1,2) >> str("/") >> digit.repeat(1,2) >> str("/") >> digit.repeat(4,4)).as(:date) }
 
   rule(:string_content) { (str("'").absent? >> any).repeat }
   rule(:string) { str("'") >> string_content.as(:string) >> str("'") >> space? }
@@ -27,7 +30,7 @@ class BooleanDsl::Parser < Parslet::Parser
   rule(:negation) { str('!') >> attribute.as(:negation) }
 
   # Elements
-  rule(:element) { negation | percentage | decimal | integer | string | array | attribute }
+  rule(:element) { negation | date | percentage | decimal | integer | string | array | attribute }
 
   # Booleans are rules that will evaluate to a true or false result
   rule(:boolean) { value_comparison | negation | attribute }

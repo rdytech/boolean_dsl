@@ -65,6 +65,11 @@ Our DSL consists of these components:
       43.56%
       -20%
 
+* **date**, a sequence of [0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4}. Examples:
+
+      9/2/2024
+      31/12/2024
+
 * **array**, a comma separated list of integer, decimal or string elements wrapped by [] (square brackets)
 
       [1,2,3]
@@ -81,7 +86,7 @@ Our DSL consists of these components:
       !Apple_Tree
       !what_i5_YOUR_name?
 
-* **element** is one of a **string**, **percentage**, **decimal**, **integer**, **array** or **attribute**.
+* **element** is one of a **string**, **date**, **percentage**, **decimal**, **integer**, **array** or **attribute**.
 
 * **comparison** consists of an **element**, followed by one of ==, !=, <, >, <=, >=, includes, excludes (the operator)
   followed by another **element**. When a comparison is evaluated, the 2 elements are compared using the operater
@@ -92,6 +97,7 @@ Our DSL consists of these components:
       alpha != delta
       8 >= 1
       [1,2,3] includes 3
+      start_date > 1/9/2024
 
 * **boolean** expression consists of a left side, followed by one of _and_, _or_ (the operator),
   followed by a right side.

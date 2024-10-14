@@ -8,6 +8,34 @@ describe 'BooleanDsl::Evaluator#evaluate' do
   specify { expect(evaluator.evaluate(percentage: '89%')).to eq(0.89) }
   specify { expect(evaluator.evaluate(string: 'alpha5')).to eq('alpha5') }
 
+  describe 'dates' do
+    subject { evaluator.evaluate(tree) }
+
+    let(:tree) { { date: date } }
+
+    context 'where date has leading zeros' do
+      let(:date) { '02/03/2024' }
+      specify { expect(subject).to eq(Date.new(2024,3,2)) }
+    end
+
+    context 'where date does not have leading zeros' do
+      let(:date) { '2/3/2024' }
+      specify { expect(subject).to eq(Date.new(2024,3,2)) }
+    end
+
+    context 'where date has mix of leading zeros' do
+      let(:date) { '2/03/2024' }
+      specify { expect(subject).to eq(Date.new(2024,3,2)) }
+    end
+
+    context 'where date is invalid' do
+      let(:date) { '32/6/2024' }
+      specify do
+        expect { subject }.to raise_error(BooleanDsl::EvaluationFailed, 'Invalid date 32/6/2024')
+      end
+    end
+  end
+
   describe 'evaluate array' do
     subject { evaluator.evaluate(tree) }
 
